@@ -1,8 +1,24 @@
 ﻿@page "/"
+@using static System.Console;
+@using static System.DateTime;
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world! Current Date/Time=@DateTime.Now.ToString("MMMM dd, yyyy hh:mm:ss.ff tt")</h1>
 
 Welcome to your new app <b>Version 7</b>.
+
+<p>built at Thu Jan  5 09:10:28 2023 </p>
+
+<button onclick="@PushMe">Push Me!</button>
+
+@code{
+    public void PushMe()
+    {
+        var greeting = $"push button at {DateTime.Now.ToString("yyyy MMM dd HH:mm:ss.ffff (dddd) (zz)")}";
+        WriteLine(greeting);
+        System.Diagnostics.Trace.WriteLine(greeting);
+    }
+
+}
 
