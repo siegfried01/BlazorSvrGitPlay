@@ -1,7 +1,7 @@
 /*
    Begin common prolog commands
    export APPSERVICE_SKU=P1V3
-   export RUNTIME="DOTNET:6.0"
+   export RUNTIME="'dotnet:6.0'"
    export LINUX_PLAN=
    export ACR_SKU=Basic
    export name=qsuwc712o
@@ -33,7 +33,9 @@
    echo CreateBuildEvent.exe
    CreateBuildEvent.exe&
    echo "begin shutdown"
-   az deployment group create --mode complete --template-file ./clear-resources.json --resource-group $rg
+   echo az group delete -n $rg  --yes
+   az group delete -n $rg --yes
+   #az deployment group create --mode complete --template-file ./clear-resources.json --resource-group $rg
    BuildIsComplete.exe
    az resource list -g $rg --query "[?resourceGroup=='$rg'].{ name: name, flavor: kind, resourceType: type, region: location }" --output table
    echo "showdown is complete"
@@ -46,7 +48,7 @@
    echo "id=$id"
    #export sp="spad_$name"
    #az ad sp create-for-rbac --name $sp --sdk-auth --role contributor --scopes $id
-   echo "go to github settings->secrets and create a secret called AZURE_CREDENTIALS with the above output"
+   #echo "go to github settings->secrets and create a secret called AZURE_CREDENTIALS with the above output"
    cat >clear-resources.json <<EOF
    {
     "\$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -67,21 +69,23 @@
 
    emacs ESC 5 F10
    Begin commands to deploy this file using Azure CLI with bash
-   echo az acr build -g $rg --image $REPO/$IMAGE:v1 --registry $REGISTRY --file Dockerfile .
-   az acr build -g $rg --image $REPO/$IMAGE:v1 --registry $REGISTRY --file Dockerfile .
+   echo az acr build -g $rg --image $REPO/$IMAGE:v1 --registry $REGISTRY --file Dockerfile . --platform windows
+   az acr build -g $rg --image $REPO/$IMAGE:v1 --registry $REGISTRY --file Dockerfile . --platform windows
    az acr repository list -n $REGISTRY
    export PASSWORD=`az acr credential show --resource-group $rg --name $REGISTRY --query passwords[0].value --output tsv | sed 's/\r$//'`
    export USERNAME=`az acr credential show --resource-group $rg --name $REGISTRY --query username  --output tsv | sed 's/\r$//'`
    echo acr password=$PASSWORD
    echo acr username=$USERNAME
    az resource list -g $rg --query "[?resourceGroup=='$rg'].{ name: name, flavor: kind, resourceType: type, region: location }" --output table
+   echo az acr build complete. Next step: az webapp create
    End commands to deploy this file using Azure CLI with bash
 
-  ERROR: The parameter WindowsFxVersion has an invalid value. Unexpected exception while validating OS and version. Image: qsuwc712oreg.azurecr.io/qsuwc712o-repo/qsuwc712o-image:latest. Error Response: NotFound. Request: https://qsuwc712oreg.azurecr.io/v2/qsuwc712o-repo/qsuwc712o-image/manifests/latest. AuthType UserName. Response: NotFound. Request: https://qsuwc712oreg.azurecr.io/v2/qsuwc712o-repo/qsuwc712o-image/manifests/latest. AuthType UserName
+   Problem fixed with --platform windows when building with 'az acr build' above
+   ERROR: The parameter WindowsFxVersion has an invalid value. Unexpected exception while validating OS and version. Image: qsuwc712oreg.azurecr.io/qsuwc712o-repo/qsuwc712o-image:latest. Error Response: NotFound. Request: https://qsuwc712oreg.azurecr.io/v2/qsuwc712o-repo/qsuwc712o-image/manifests/latest. AuthType UserName. Response: NotFound. Request: https://qsuwc712oreg.azurecr.io/v2/qsuwc712o-repo/qsuwc712o-image/manifests/latest. AuthType UserName
    emacs ESC 6 F10
    Begin commands to deploy this file using Azure CLI with bash
-   echo az webapp create  --name $WEB --resource-group  $rg  --runtime $RUNTIME --plan $PLAN --deployment-container-image-name $REGISTRY.azurecr.io/$REPO/$IMAGE -s $USERNAME -w $PASSWORD
-   az webapp create  --name $WEB --resource-group  $rg    --runtime $RUNTIME --plan $PLAN --deployment-container-image-name $REGISTRY.azurecr.io/$REPO/$IMAGE -s $USERNAME -w $PASSWORD
+   echo az webapp create  --name $WEB --resource-group  $rg  --runtime 'dotnet:6' --plan $PLAN --deployment-container-image-name $REGISTRY.azurecr.io/$REPO/$IMAGE:v1 -s $USERNAME -w $PASSWORD
+   az webapp create  --name $WEB --resource-group  $rg    --runtime 'dotnet:6' --plan $PLAN --deployment-container-image-name $REGISTRY.azurecr.io/$REPO/$IMAGE:v1 -s $USERNAME -w $PASSWORD
    End commands to deploy this file using Azure CLI with bash
 
  */
