@@ -7,7 +7,6 @@
 <h1>Hello, world! Current Date/Time=@DateTime.Now.ToString("MMMM dd, yyyy hh:mm:ss.ff tt")</h1>
 
 
-Welcome to your new app <b>Version 7E merged with Version 6</b>.
 
 <p>built at Thu Mar  9 08:21:47 2023 </p>
 <select multiple @ref="selectTasks" @onchange="OnSelectionChangedTaskSelect">
@@ -34,7 +33,23 @@ Welcome to your new app <b>Version 7E merged with Version 6</b>.
         }
     </tbody>
 </table>
+<h1>Directions to Reproduce</h1>
+<ol>
+    <li>Select a task "take out the garbage" using the left mouse button. Does the task appear under the <b>Task</b> column in the table below the select control? Some times this works, sometimes not.</li>
+    <li>Optional: Click on the button to see the selected tasks in the log (this assumes you are running this in debug mode on Visual Studio).</li>
+    <li>Select another task "walk the dog" by simultaneously holding the ctrl key down and using left mouse key to select a second task. This should appear in the table</li>
+    <li>Try to remove the task "walk the dog" by left mouse clicking on "walk the dog". This does not work. </li>
+    <li>Try selecting another task "go grocery shopping" with the ctrl-left-mouse key.</li>
+    <li>Please experiment with clicking on tasks with the left mouse button to reproduce my failures.</li>
+</ol>
 
+<h1>References</h1>
+<ol>
+    <li><a href="https://learn.microsoft.com/en-us/training/modules/blazor-build-rich-interactive-components/3-exercise-use-javascript-libraries-blazor-apps">https://learn.microsoft.com/en-us/training/modules/blazor-build-rich-interactive-components/3-exercise-use-javascript-libraries-blazor-apps </a></li>
+    <li> <a href="https://learn.microsoft.com/en-us/training/modules/blazor-improve-how-forms-work/3-exercise-create-blazor-event-handler-onclick-events">https://learn.microsoft.com/en-us/training/modules/blazor-improve-how-forms-work/3-exercise-create-blazor-event-handler-onclick-events</a> </li>
+    <li><a href="https://stackoverflow.com/questions/67869897/blazor-binding-multiple-select-to-a-value">https://stackoverflow.com/questions/67869897/blazor-binding-multiple-select-to-a-value</a> This solution is clumsy and does not contain the logic to deselect.</li>
+    <li><a href="https://lord.technology/2021/06/07/input-select-multiple-in-blazor.html">https://lord.technology/2021/06/07/input-select-multiple-in-blazor.html</a> Please help me implement this solution ... so far it is not working consistently.</li>
+</ol>
 @code {
     public List<string> tasks = new List<string> { "take out garbage", "walk the dog", "make lunch", "go grocery shopping" };
     ElementReference selectTasks;
@@ -51,7 +66,7 @@ Welcome to your new app <b>Version 7E merged with Version 6</b>.
 
     public void LogSelectedTasks()
     {
-        Logger.LogInformation($"selectedTasks={((selectedTasks is not null && selectedTasks.Count>0) ? string.Join(",", selectedTasks) : "<no tasks>")}");
+        Logger.LogInformation($"selectedTasks={((selectedTasks is not null && selectedTasks.Count > 0) ? string.Join(",", selectedTasks) : "<no tasks>")}");
     }
 }
 
